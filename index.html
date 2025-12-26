@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Controle de Números de WhatsApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="login-screen">
+      <div class="login-container">
+        <div class="login-header">
+          <h1>Controle de Números de WhatsApp</h1>
+          <p>Faça login para acessar o painel</p>
+        </div>
+        <form id="loginForm" class="login-form">
+          <div class="login-field">
+            <label for="login-username">Usuário</label>
+            <input
+              type="text"
+              id="login-username"
+              name="username"
+              placeholder="Digite seu usuário"
+              required
+              autocomplete="username"
+            />
+          </div>
+          <div class="login-field">
+            <label for="login-password">Senha</label>
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              placeholder="Digite sua senha"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+          <div id="login-error" class="login-error"></div>
+          <button type="submit" class="btn primary login-submit">Entrar</button>
+        </form>
+        <div class="login-footer">
+          <button id="logout-btn" class="btn-link" style="display: none;">Sair</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aplicação Principal (escondida até fazer login) -->
+    <div id="app-content" class="app-content" style="display: none;">
+      <header class="topbar">
+        <div class="topbar-content">
+          <h1>Controle de Números de WhatsApp</h1>
+          <div class="topbar-actions">
+            <button id="debug-log-btn" class="btn-icon" title="Ver logs de debug">📋</button>
+            <button id="logout-header-btn" class="btn secondary logout-btn">Sair</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="container">
+      <section class="panel">
+        <h2>Novo número</h2>
+        <form id="numberForm" class="form-grid">
+          <div class="form-field">
+            <label for="phone">Número (WhatsApp)</label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              placeholder="(88) 99999-9999"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label for="device">Telefone / Slot</label>
+            <input
+              type="text"
+              id="device"
+              name="device"
+              placeholder="Chip 3 &quot;B&quot;, aparelho X..."
+            />
+          </div>
+          <div class="form-field">
+            <label for="seller">Vendedor / Atendente</label>
+            <input
+              type="text"
+              id="seller"
+              name="seller"
+              placeholder="Nome do responsável"
+            />
+          </div>
+          <div class="form-field">
+            <label for="sector">Setor</label>
+            <select id="sector" name="sector">
+              <option value="aquecimento">Aquecimento</option>
+              <option value="atendimento">Atendimento</option>
+              <option value="acompanhamento">Acompanhamento</option>
+              <option value="outros">Outros</option>
+              <option value="banido">Disponível para ativação</option>
+              <option value="restrito">Números Restritos</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="notes">Observações</label>
+            <textarea
+              id="notes"
+              name="notes"
+              placeholder="Informações importantes sobre o número"
+              rows="2"
+            ></textarea>
+          </div>
+          <div class="form-field">
+            <label for="activationDate">Data de Ativação</label>
+            <input
+              type="date"
+              id="activationDate"
+              name="activationDate"
+              placeholder="DD/MM/AAAA"
+            />
+          </div>
+          <div class="form-field form-submit">
+            <button type="submit" class="btn primary">Salvar número</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <header class="panel-header">
+          <h2>Números cadastrados</h2>
+          <input
+            id="search"
+            type="text"
+            placeholder="Buscar por número, vendedor ou observação..."
+          />
+        </header>
+        <div id="global-results" class="global-results"></div>
+
+        <div class="sectors">
+          <section class="sector" data-sector="atendimento">
+            <header class="sector-header atendimento">
+              <div class="sector-header-main">
+                <h3>Atendimento</h3>
+                <span class="badge" id="count-atendimento">0</span>
+              </div>
+              <input
+                id="search-atendimento"
+                class="sector-search"
+                type="text"
+                placeholder="Filtrar apenas nesta coluna..."
+              />
+            </header>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Telefone</th>
+                    <th>Vendedor</th>
+                    <th>Observações</th>
+                    <th>Data de Ativação</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-atendimento"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="sector" data-sector="acompanhamento">
+            <header class="sector-header acompanhamento">
+              <div class="sector-header-main">
+                <h3>Acompanhamento</h3>
+                <span class="badge" id="count-acompanhamento">0</span>
+              </div>
+              <input
+                id="search-acompanhamento"
+                class="sector-search"
+                type="text"
+                placeholder="Filtrar apenas nesta coluna..."
+              />
+            </header>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Telefone</th>
+                    <th>Vendedor</th>
+                    <th>Observações</th>
+                    <th>Data de Ativação</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-acompanhamento"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="sector" data-sector="aquecimento">
+            <header class="sector-header aquecimento">
+              <div class="sector-header-main">
+                <h3>Números em Aquecimento</h3>
+                <span class="badge" id="count-aquecimento">0</span>
+              </div>
+              <input
+                id="search-aquecimento"
+                class="sector-search"
+                type="text"
+                placeholder="Filtrar apenas nesta coluna..."
+              />
+            </header>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Telefone</th>
+                    <th>Vendedor</th>
+                    <th>Observações</th>
+                    <th>Data de Ativação</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-aquecimento"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="sector" data-sector="banido">
+            <header class="sector-header banido">
+              <div class="sector-header-main">
+                <h3>Disponível para ativação</h3>
+                <span class="badge" id="count-banido">0</span>
+              </div>
+              <input
+                id="search-banido"
+                class="sector-search"
+                type="text"
+                placeholder="Filtrar apenas nesta coluna..."
+              />
+            </header>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Telefone</th>
+                    <th>Vendedor</th>
+                    <th>Observações</th>
+                    <th>Data de Ativação</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-banido"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="sector" data-sector="outros">
+            <header class="sector-header outros">
+              <div class="sector-header-main">
+                <h3>Outros</h3>
+                <span class="badge" id="count-outros">0</span>
+              </div>
+              <input
+                id="search-outros"
+                class="sector-search"
+                type="text"
+                placeholder="Filtrar apenas nesta coluna..."
+              />
+            </header>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Telefone</th>
+                    <th>Vendedor</th>
+                    <th>Observações</th>
+                    <th>Data de Ativação</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-outros"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="sector" data-sector="restrito">
+            <header class="sector-header restrito">
+              <div class="sector-header-main">
+                <h3>Números Restritos</h3>
+                <span class="badge" id="count-restrito">0</span>
+              </div>
+              <input
+                id="search-restrito"
+                class="sector-search"
+                type="text"
+                placeholder="Filtrar apenas nesta coluna..."
+              />
+            </header>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Telefone</th>
+                    <th>Vendedor</th>
+                    <th>Observações</th>
+                    <th>Data da Restrição</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-restrito"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- Seção de Dados de Ativações -->
+      <section class="panel">
+        <h2>Dados de Ativações</h2>
+        <form id="activationForm" class="form-grid">
+          <div class="form-field">
+            <label for="cpf">CPF</label>
+            <input
+              type="text"
+              id="cpf"
+              name="cpf"
+              placeholder="000.000.000-00"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label for="nome">Nome</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              placeholder="Nome completo"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label for="dataNascimento">Data de Nascimento</label>
+            <input
+              type="date"
+              id="dataNascimento"
+              name="dataNascimento"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label for="uf">UF</label>
+            <input
+              type="text"
+              id="uf"
+              name="uf"
+              placeholder="SP, RJ, MG..."
+              maxlength="2"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label for="wa">WA (WhatsApp)</label>
+            <input
+              type="text"
+              id="wa"
+              name="wa"
+              placeholder="Número do WhatsApp"
+              required
+            />
+          </div>
+          <div class="form-field form-submit">
+            <button type="submit" class="btn primary">Salvar ativação</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <header class="panel-header">
+          <h2>Ativações cadastradas</h2>
+          <input
+            id="search-activations"
+            type="text"
+            placeholder="Buscar por CPF, nome, UF ou WA..."
+          />
+        </header>
+        <div class="table-wrapper">
+          <table id="activations-table">
+            <thead>
+              <tr>
+                <th>CPF</th>
+                <th>Nome</th>
+                <th>Data de Nascimento</th>
+                <th>UF</th>
+                <th>WA</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-activations"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="actions-modal" class="actions-modal">
+      <div class="actions-modal-backdrop"></div>
+      <div class="actions-modal-content">
+        <h3>Ações para o número selecionado</h3>
+        <div class="actions-modal-buttons">
+          <button id="actions-move" class="btn secondary">Mover</button>
+          <button id="actions-edit" class="btn secondary">Editar</button>
+          <button id="actions-delete" class="btn danger">Excluir</button>
+        </div>
+        <button id="actions-close" class="actions-modal-close">Fechar</button>
+      </div>
+    </div>
+
+    <!-- Modal de Logs de Debug -->
+    <div id="debug-log-modal" class="debug-log-modal">
+      <div class="debug-log-backdrop"></div>
+      <div class="debug-log-content">
+        <div class="debug-log-header">
+          <h3>📋 Logs de Debug</h3>
+          <div class="debug-log-actions">
+            <button id="debug-clear-btn" class="btn secondary">Limpar</button>
+            <button id="debug-close-btn" class="btn secondary">Fechar</button>
+          </div>
+        </div>
+        <div id="debug-log-content" class="debug-log-body"></div>
+      </div>
+    </div>
+
+      <footer class="footer">
+        <span>Controle de contingência WhatsApp - uso interno</span>
+      </footer>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuração e inicialização do Supabase -->
+    <script src="config.js"></script>
+    <script src="supabase.js"></script>
+    
+    <!-- Autenticação e aplicação -->
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="activations.js"></script>
+  </body>
+  </html>
+
+
